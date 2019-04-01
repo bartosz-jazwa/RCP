@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.JFXButton?>
+<?import com.jfoenix.controls.JFXComboBox?>
+<?import com.jfoenix.controls.JFXTimePicker?>
+<?import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane prefHeight="400.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="view.AddEntryController">
+   <children>
+      <JFXComboBox fx:id="projectSelector" onAction="#selectProject" prefHeight="25.0" prefWidth="179.0" promptText="Select project" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0" />
+      <JFXComboBox fx:id="activitySelector" layoutX="179.0" onAction="#selectActivity" prefHeight="25.0" prefWidth="179.0" promptText="Select activity" />
+
+      <JFXButton fx:id="acceptButton" layoutX="708.0" onAction="#acceptEntry" prefHeight="25.0" prefWidth="25.0" style="-fx-background-color: #699999;" wrapText="true">
+         <graphic>
+            <FontAwesomeIconView glyphName="CALENDAR_CHECK_ALT" size="16" />
+         </graphic>
+      </JFXButton>
+      <JFXTimePicker fx:id="startHourPicker" layoutX="358.0" />
+      <JFXTimePicker fx:id="finishHourPicker" layoutX="529.0" />
+   </children>
+</AnchorPane>

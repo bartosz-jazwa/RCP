@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.JFXButton?>
+<?import com.jfoenix.controls.JFXPasswordField?>
+<?import com.jfoenix.controls.JFXTextField?>
+<?import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="view.Controller">
+   <children>
+      <JFXTextField fx:id="userNameInput" focusColor="#699999" layoutX="233.0" layoutY="164.0" promptText="Username">
+         <font>
+            <Font size="14.0" />
+         </font>
+      </JFXTextField>
+      <JFXPasswordField fx:id="passInput" focusColor="#699999" layoutX="233.0" layoutY="211.0" promptText="Password">
+         <font>
+            <Font size="14.0" />
+         </font>
+      </JFXPasswordField>
+      <JFXButton fx:id="loginButton" buttonType="RAISED" defaultButton="true" layoutX="335.0" layoutY="267.0" onAction="#handleButtonAction" style="-fx-background-color: #699999;" text="Login">
+         <font>
+            <Font size="14.0" />
+         </font>
+      </JFXButton>
+      <FontAwesomeIconView fx:id="closeX" fill="#699999" glyphName="CLOSE" layoutX="574.0" layoutY="25.0" onMouseClicked="#closeLoginWindow" size="16" />
+      <FontAwesomeIconView fill="#699999" glyphName="USER" layoutX="212.0" layoutY="181.0" size="14" />
+      <FontAwesomeIconView fill="#699999" glyphName="LOCK" layoutX="212.0" layoutY="228.0" size="14" />
+      <Label fx:id="wrongUserOrPass" layoutX="233.0" layoutY="247.0" prefHeight="17.0" prefWidth="168.0" text="Wrong username or password" textFill="#f20707" />
+   </children>
+</AnchorPane>
