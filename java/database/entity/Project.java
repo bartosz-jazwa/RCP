@@ -1,11 +1,12 @@
 package database.entity;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.Set;
 
 @Entity
 @Table(name = "Project")
-public class Project {
+public class Project implements Serializable{
     @Id
     @Column(name = "Name", unique = true, nullable = false)
     private String name;

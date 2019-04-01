@@ -5,9 +5,10 @@ import database.entity.Employee;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 
+import java.io.Serializable;
 import java.util.Optional;
 
-public class EmployeeDaoImpl extends DaoImpl {
+public class EmployeeDaoImpl extends DaoImpl<Employee> {
     public EmployeeDaoImpl() {
         super(Employee.class);
     }
@@ -28,15 +29,15 @@ public class EmployeeDaoImpl extends DaoImpl {
         session.close();
     }
 
-    public Optional<Employee> get(Integer id) {
+    private Optional<Employee> get(Integer id) {
         Session session = super.getSession();
         session.beginTransaction();
-        Employee employee = session.get(Employee.class,id);
+        Optional<Employee> employee = super.get(id);
         session.close();
-        return Optional.ofNullable(employee);
+        return employee;
     }
 
-    public Optional<Employee> get(Credentials c) {
+    private Optional<Employee> get(Credentials c) {
         Session session = super.getSession();
         session.beginTransaction();
 
@@ -47,5 +48,10 @@ public class EmployeeDaoImpl extends DaoImpl {
         session.close();
 
         return optionalEmployee;
+    }
+
+    @Override
+    public <C extends Serializable> Optional<Employee> get(C c) {
+        return this.get((Credentials)c);
     }
 }

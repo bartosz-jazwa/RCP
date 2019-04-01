@@ -8,11 +8,12 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Optional;
 
-public class DaoImpl<T, C extends Serializable> implements Dao<T, C> {
+public class DaoImpl<T extends Serializable> implements Dao<T>{
 
     private SessionFactory factory = HibernateUtil.getSessionFactory();
     private Session session = factory.openSession();
     private Class<T> entityClass;
+
 
     public DaoImpl(Class<T> entityClass) {
         this.entityClass = entityClass;
@@ -36,7 +37,7 @@ public class DaoImpl<T, C extends Serializable> implements Dao<T, C> {
     }
 
     @Override
-    public Optional<T> get(C id) {
+    public <C extends Serializable> Optional<T> get(C id) {
         session.beginTransaction();
         T t = session.get(entityClass,id);
         session.close();
@@ -55,4 +56,5 @@ public class DaoImpl<T, C extends Serializable> implements Dao<T, C> {
     protected Session getSession() {
         return session;
     }
+
 }

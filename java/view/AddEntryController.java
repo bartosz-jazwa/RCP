@@ -5,7 +5,6 @@ import com.jfoenix.controls.JFXComboBox;
 import com.jfoenix.controls.JFXTimePicker;
 import database.dao.Dao;
 import database.dao.DaoImpl;
-import database.dao.EntryDaoImpl;
 import database.entity.Activity;
 import database.entity.Employee;
 import database.entity.Project;
@@ -62,7 +61,7 @@ public class AddEntryController implements Initializable {
     }
     @FXML
     public void acceptEntry(){
-        Dao dao = new EntryDaoImpl();
+        Dao<Employee> dao = new DaoImpl<>(Employee.class);
         if (this.project!=null && this.activity!=null){
             this.employee.addEntry(this.date,this.startHourPicker.getValue(),finishHourPicker.getValue(),this.project,this.activity);
         }
@@ -74,8 +73,9 @@ public class AddEntryController implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
 
 
-        Dao<Project, String> dao = new DaoImpl<>(Project.class);
+        Dao<Project> dao = new DaoImpl<>(Project.class);
         projects = dao.getAll();
+
 
         projects.forEach(project -> {
             projectSelector.getItems().add(project.getName());

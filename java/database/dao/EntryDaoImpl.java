@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public class EntryDaoImpl extends DaoImpl {
+public class EntryDaoImpl extends DaoImpl<Entry> {
     public EntryDaoImpl() {
         super(Entry.class);
     }

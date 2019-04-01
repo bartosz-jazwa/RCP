@@ -426,8 +426,8 @@ public class EntryController implements Initializable {
                 .get();
 
         employee.getEntries().remove(searchedForEntry);
-        Dao<Entry, Integer> dao = new DaoImpl<>(Entry.class);
-        dao.delete(searchedForEntry);
+        Dao<Entry> entryDao = new DaoImpl<>(Entry.class);
+        entryDao.delete(searchedForEntry);
         treeTableViewer.getRoot().getChildren().remove(index);
     }
 }

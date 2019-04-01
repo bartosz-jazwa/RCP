@@ -3,6 +3,7 @@ package view;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXPasswordField;
 import com.jfoenix.controls.JFXTextField;
+import database.dao.Dao;
 import database.dao.EmployeeDaoImpl;
 import database.entity.Credentials;
 import database.entity.Employee;
@@ -41,7 +42,7 @@ public class Controller implements Initializable {
         closeX.setDisable(true);
 
         Credentials loginCredentials = new Credentials(userNameInput.getText(),passInput.getText());
-        EmployeeDaoImpl dao = new EmployeeDaoImpl();
+        Dao<Employee> dao = new EmployeeDaoImpl();
         Optional<Employee> loggedEmployee = dao.get(loginCredentials);
         loggedEmployee.ifPresent(employee -> {
             closeStage();
@@ -82,5 +83,6 @@ public class Controller implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         wrongUserOrPass.setVisible(false);
+
     }
 }
