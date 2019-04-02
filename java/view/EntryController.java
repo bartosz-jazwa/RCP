@@ -158,12 +158,16 @@ public class EntryController implements Initializable {
             button.setMaxWidth(45);
             button.setShape(circle);
 
-            if (localDate.getDayOfWeek() == DayOfWeek.SATURDAY) {
-                button.setBackground(backgroundSat);
-            } else if (localDate.getDayOfWeek() == DayOfWeek.SUNDAY) {
-                button.setBackground(backgroundSun);
-            } else {
-                button.setBackground(backgroundWhite);
+            switch (localDate.getDayOfWeek()) {
+                case SATURDAY:
+                    button.setBackground(backgroundSat);
+                    break;
+                case SUNDAY:
+                    button.setBackground(backgroundSun);
+                    break;
+                default:
+                    button.setBackground(backgroundWhite);
+                    break;
             }
 
             button.setText(localDate.getDayOfMonth()
@@ -291,7 +295,7 @@ public class EntryController implements Initializable {
                 if (empty) {
                     setGraphic(addBox);
 
-                    setText("ssss");
+                    setText("Chce tylko 1 guzik");
 
                 } else {
 
@@ -381,7 +385,7 @@ public class EntryController implements Initializable {
                 .collect(Collectors.toList());
         //propertyList.add(new EntryProperty());
         ObservableList<EntryProperty> observableList = new ObservableListWrapper<>(propertyList);
-        TreeItem<EntryProperty> root = new RecursiveTreeItem<EntryProperty>(observableList, RecursiveTreeObject::getChildren);
+        TreeItem<EntryProperty> root = new RecursiveTreeItem<>(observableList, RecursiveTreeObject::getChildren);
 
         treeTableViewer.setRoot(root);
     }

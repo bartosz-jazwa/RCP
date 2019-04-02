@@ -23,6 +23,7 @@ public class EntryDaoImpl extends DaoImpl<Entry> {
         Session session = super.getSession();
         session.beginTransaction();
         List<Entry> entries = session.createCriteria(Entry.class).add(Restrictions.eq("employee", employee)).add(Restrictions.eq("dates",date)).list();
+        session.close();
         return entries;
     }
     public Set<Entry> getByMonth(Employee employee, LocalDate date){
