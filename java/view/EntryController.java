@@ -6,8 +6,10 @@ import com.sun.javafx.collections.ObservableListWrapper;
 import database.dao.Dao;
 import database.dao.DaoImpl;
 import database.dao.EntryDaoImpl;
+import database.entity.Activity;
 import database.entity.Employee;
 import database.entity.Entry;
+import database.entity.Project;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -18,6 +20,7 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTreeTableCell;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
@@ -46,24 +49,22 @@ public class EntryController implements Initializable {
     private HBox hTopBar = new HBox();
     @FXML
     private Label userName;
-
     @FXML
     private JFXButton timesheetButton;
-
     @FXML
     private JFXButton delegationButton;
-
     @FXML
     private Label monthYearLabel = new Label();
     @FXML
     private HBox calendarDay = new HBox();
-
     @FXML
     private JFXTreeTableView<EntryProperty> treeTableViewer = new JFXTreeTableView<>();
     @FXML
     private MenuItem removeEntryMenuItem;
     @FXML
     private JFXButton addEntry;
+    @FXML
+    private TableView<Entry> standardTestTable;
 
     private LocalDate nowDate = LocalDate.now();
 
@@ -199,6 +200,22 @@ public class EntryController implements Initializable {
                 }
             });
         });
+    }
+
+    private void setUpStandardTestTable(){
+        TableColumn<Entry,LocalTime> startHour = new TableColumn<>("Start hour");
+        TableColumn<Entry,LocalTime> finishHour = new TableColumn<>("Finish hour");
+        TableColumn<Entry, Project> project = new TableColumn<>("Project");
+        TableColumn<Entry, Activity> activity = new TableColumn<>("Activity");
+
+        startHour.setCellValueFactory(new PropertyValueFactory<>("startHour"));
+        finishHour.setCellValueFactory(new PropertyValueFactory<>("finishHour"));
+        project.setCellValueFactory(new PropertyValueFactory<>("project"));
+        activity.setCellValueFactory(new PropertyValueFactory<>("activity"));
+
+        ObservableList<Entry> entries = new ObservableListWrapper<>(currentDayEntries);
+        standardTestTable.setItems(entries);
+        standardTestTable.getColumns().setAll(startHour,finishHour,project,activity);
     }
 
     private void setUpTable() {
@@ -366,10 +383,12 @@ public class EntryController implements Initializable {
 
     public void initEmployee(Employee employee) {
         this.employee = employee;
-        userName.setText(this.employee.getUsername());
+        userName.setText(this.employee.getName());
         setUpTable();
+
         getEntries(LocalDate.now());
         fillTable(currentMonthEntries, LocalDate.now());
+        setUpStandardTestTable();
     }
 
     private void fillTable(Set<Entry> entries, LocalDate date) {
@@ -388,6 +407,8 @@ public class EntryController implements Initializable {
         TreeItem<EntryProperty> root = new RecursiveTreeItem<>(observableList, RecursiveTreeObject::getChildren);
 
         treeTableViewer.setRoot(root);
+        //ObservableList<Entry> obsEntries = new ObservableListWrapper<>(currentDayEntries);
+        //standardTestTable.setItems(obsEntries);
     }
 
     private void getEntries(LocalDate date) {

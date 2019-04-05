@@ -1,10 +1,11 @@
 package database.entity;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 @Entity
-public class Department {
+public class Department implements Serializable {
     @Id
     @Column(name = "Name")
     private String name;

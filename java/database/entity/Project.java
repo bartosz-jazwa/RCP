@@ -44,4 +44,9 @@ public class Project implements Serializable{
     public void addActivity(Activity activity) {
         this.activities.add(activity);
     }
+
+    @Override
+    public String toString() {
+        return name;
+    }
 }

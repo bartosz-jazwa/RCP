@@ -4,10 +4,11 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import java.io.Serializable;
 
 @Entity
 @Table(name = "Activity")
-public class Activity {
+public class Activity implements Serializable {
     @Id
     @Column(name = "ID")
     private int id;
@@ -23,6 +24,11 @@ public class Activity {
     }
 
     public String getName() {
+        return name;
+    }
+
+    @Override
+    public String toString() {
         return name;
     }
 }

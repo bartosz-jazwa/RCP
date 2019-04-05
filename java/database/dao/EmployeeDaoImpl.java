@@ -29,15 +29,7 @@ public class EmployeeDaoImpl extends DaoImpl<Employee> {
         session.close();
     }
 
-    private Optional<Employee> get(Integer id) {
-        Session session = super.getSession();
-        session.beginTransaction();
-        Optional<Employee> employee = super.get(id);
-        session.close();
-        return employee;
-    }
-
-    private Optional<Employee> get(Credentials c) {
+    public Optional<Employee> get(Credentials c) {
         Session session = super.getSession();
         session.beginTransaction();
 
@@ -54,4 +46,5 @@ public class EmployeeDaoImpl extends DaoImpl<Employee> {
     public <C extends Serializable> Optional<Employee> get(C c) {
         return this.get((Credentials)c);
     }
+
 }
