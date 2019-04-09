@@ -57,4 +57,10 @@ public class DaoImpl<T extends Serializable> implements Dao<T>{
         return session;
     }
 
+    public void flush(){
+        session.beginTransaction();
+        session.flush();
+        session.close();
+    }
+
 }

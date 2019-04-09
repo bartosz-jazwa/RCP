@@ -2,10 +2,14 @@ package database.entity;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.Comparator;
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicReference;
 
 @Entity
 public class Employee implements Serializable{
@@ -24,7 +28,7 @@ public class Employee implements Serializable{
     private Department department;
     @Column(name = "Position")
     private String position;
-    @OneToMany(targetEntity = Entry.class, cascade = CascadeType.ALL, mappedBy = "employee",fetch = FetchType.EAGER)
+    @OneToMany(targetEntity = Entry.class, cascade = CascadeType.ALL, mappedBy = "employee",fetch = FetchType.LAZY)
     private Set<Entry> entries = new HashSet<>();
 
     public Employee() {
@@ -46,8 +50,30 @@ public class Employee implements Serializable{
 
     public void addEntry(LocalDate date, LocalTime start, LocalTime stop, Project project, Activity activity) {
 
-        this.entries.add(new Entry(this, date, start, stop, project, activity));
+        AtomicReference<LocalTime> calcStart = new AtomicReference<>(start);
+        AtomicReference<LocalTime> calcStop = new AtomicReference<>(stop);
 
+        if (stop.isBefore(start)){
+            calcStop.set(start);
+        }
+
+        Duration duration= Duration.between(start,stop);
+
+        Optional<Entry> entryMax = this.entries.stream()
+                .filter(entry -> entry.getDate().equals(date))
+                .max(Comparator.comparing(Entry::getFinishHour));
+        entryMax.ifPresent(e -> {
+            if (start.isBefore(e.getFinishHour())|| stop.isBefore(e.getFinishHour())){
+                calcStart.set(e.getFinishHour());
+                calcStop.set(e.getFinishHour().plus(duration));
+            }
+
+        });
+
+        LocalTime newStart = calcStart.get();
+        LocalTime newStop = calcStop.get();
+
+        this.entries.add(new Entry(this, date, newStart, newStop, project, activity));
     }
 
     public void addEntry(Entry entry) {

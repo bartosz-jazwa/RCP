@@ -5,6 +5,7 @@ import com.jfoenix.controls.datamodels.treetable.RecursiveTreeObject;
 import com.sun.javafx.collections.ObservableListWrapper;
 import database.dao.Dao;
 import database.dao.DaoImpl;
+import database.dao.EmployeeDaoImpl;
 import database.dao.EntryDaoImpl;
 import database.entity.Activity;
 import database.entity.Employee;
@@ -76,9 +77,14 @@ public class EntryController implements Initializable {
 
     private List<Entry> currentDayEntries;
 
+    private List<Project> projects;
+
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+
+        Dao<Project> dao = new DaoImpl<>(Project.class);
+        projects = dao.getAll();
 
         monthYearLabel.setText(nowDate.getMonth().name() + " " + nowDate.getYear());
 
@@ -92,8 +98,11 @@ public class EntryController implements Initializable {
 
     @FXML
     public void buttonLogOut() {
+        EmployeeDaoImpl employeeDao = new EmployeeDaoImpl();
+        employeeDao.flush();
         closeEntry();
         openLogin();
+
     }
 
     @FXML
@@ -290,7 +299,7 @@ public class EntryController implements Initializable {
                 deleteIcon.setGlyphSize(30);
                 editButton.setGraphic(editIcon);
                 deleteButton.setGraphic(deleteIcon);
-                box.getChildren().addAll(editButton, deleteButton);
+                box.getChildren().addAll(deleteButton);
                 addIcon.setGlyphName("CALENDAR_PLUS_ALT");
                 addIcon.setGlyphSize(30);
                 addButton.setGraphic(addIcon);
@@ -310,9 +319,9 @@ public class EntryController implements Initializable {
             public void updateItem(String item, boolean empty) {
                 //super.updateItem(item, empty);
                 if (empty) {
-                    setGraphic(addBox);
+                    setGraphic(null);
 
-                    setText("Chce tylko 1 guzik");
+                    setText(item);
 
                 } else {
 
@@ -428,7 +437,7 @@ public class EntryController implements Initializable {
             stage.setScene(new Scene(parent));
 
             AddEntryController entryController = loader.getController();
-            entryController.setEmployee(employee, nowDate);
+            entryController.setInitData(employee, projects,nowDate);
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.show();
 
@@ -455,4 +464,5 @@ public class EntryController implements Initializable {
         entryDao.delete(searchedForEntry);
         treeTableViewer.getRoot().getChildren().remove(index);
     }
+
 }

@@ -10,6 +10,7 @@ import database.entity.Employee;
 import database.entity.Project;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.stage.Stage;
 
 import java.net.URL;
 import java.time.LocalDate;
@@ -36,28 +37,25 @@ public class AddEntryController implements Initializable {
     @FXML
     JFXTimePicker finishHourPicker;
 
-    public void setEmployee(Employee employee, LocalDate date) {
+    public void setInitData(Employee employee, List<Project> projects, LocalDate date) {
         this.employee = employee;
         this.date = date;
+        this.projects = projects;
+
+        projectSelector.getItems().setAll(projects);
     }
 
     @FXML
     public void selectProject() {
-        String projectName = (String) projectSelector.getValue();
-        project = projects.stream()
-                .filter(project -> project.getName().equals(projectName))
-                .findFirst()
-                .get();
+
+        project = (Project) projectSelector.getValue();
         activities = project.getActivities();
-        activities.forEach(activity -> activitySelector.getItems().add(activity.getName()));
+        activitySelector.getItems().setAll(activities);
     }
     @FXML
     public void selectActivity(){
-        String activityName = (String) activitySelector.getValue();
-        activity = activities.stream()
-                .filter(activ -> activ.getName().equals(activityName))
-                .findFirst()
-                .get();
+
+        activity = (Activity) activitySelector.getValue();
     }
     @FXML
     public void acceptEntry(){
@@ -65,6 +63,7 @@ public class AddEntryController implements Initializable {
         if (this.project!=null && this.activity!=null){
             this.employee.addEntry(this.date,this.startHourPicker.getValue(),finishHourPicker.getValue(),this.project,this.activity);
         }
+        ((Stage) acceptButton.getScene().getWindow()).close();
 
         dao.save(this.employee);
     }
@@ -73,13 +72,6 @@ public class AddEntryController implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
 
 
-        Dao<Project> dao = new DaoImpl<>(Project.class);
-        projects = dao.getAll();
-
-
-        projects.forEach(project -> {
-            projectSelector.getItems().add(project.getName());
-        });
         startHourPicker.set24HourView(true);
         startHourPicker.setValue(LocalTime.of(7,0));
         finishHourPicker.set24HourView(true);

@@ -27,6 +27,7 @@ public class EmployeeDaoImpl extends DaoImpl<Employee> {
         session.createQuery("delete Employee where id=:id").setParameter("id", id).executeUpdate();
         session.getTransaction().commit();
         session.close();
+
     }
 
     public Optional<Employee> get(Credentials c) {
@@ -36,7 +37,6 @@ public class EmployeeDaoImpl extends DaoImpl<Employee> {
         Employee employee = (Employee) session.createCriteria(Employee.class).add(Restrictions.eq("credentials", c)).uniqueResult();
         Optional<Employee> optionalEmployee = Optional.ofNullable(employee);
 
-        //session.disconnect();
         session.close();
 
         return optionalEmployee;
@@ -44,7 +44,7 @@ public class EmployeeDaoImpl extends DaoImpl<Employee> {
 
     @Override
     public <C extends Serializable> Optional<Employee> get(C c) {
-        return this.get((Credentials)c);
+        return this.get((Credentials) c);
     }
 
 }
