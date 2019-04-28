@@ -3,7 +3,10 @@ package delegation.entity;
 import database.entity.Employee;
 import database.entity.Project;
 
-import java.time.Year;
+import java.time.*;
+import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
+import java.util.Currency;
 import java.util.List;
 import java.util.Locale;
 
@@ -14,23 +17,36 @@ public class Delegation {
     private Locale country;
     private TravelTo travelTo;
     private TravelBack travelBack;
-    private float advance;
+    private Float advanceAmount;
+    private Currency advanceCurrency;
     private List<Bill> bills;
 
-    public long calculateDuration(){
+    public Float calcDiet(Float rate){
 
-        long days;
-        if (travelBack.getCrossBorderTime().getYear()==travelTo.getCrossBorderTime().getYear()) {
-            days = travelBack.getCrossBorderTime().getDayOfYear() - travelTo.getCrossBorderTime().getDayOfYear()+1;
-        }else{
-            if(Year.from(travelTo.getCrossBorderTime()).isLeap() && travelBack.getCrossBorderTime().getDayOfYear()<60){
-                days = travelBack.getCrossBorderTime().getDayOfYear() - travelTo.getCrossBorderTime().getDayOfYear()+366+1;
-            }else {
-                days = travelBack.getCrossBorderTime().getDayOfYear() - travelTo.getCrossBorderTime().getDayOfYear()+365+1;
-            }
+        Duration duration = Duration.between(
+                travelTo.getCrossBorderTime(),
+                travelBack.getCrossBorderTime()
+        );
+
+        long fullDays = duration.toDays();
+        long minutes = duration.toMinutes()%1440;
+        float hours = minutes/60;
+
+        Float diet;
+
+        if (hours>=12){
+            diet = rate;
+        }else if (hours>=8){
+            diet = rate/2;
+        }else if(hours>0){
+            diet = rate/3;
+        }else {
+            diet = 0f;
         }
 
-        return days;
+        diet = diet+ fullDays*rate;
+        return diet;
+
     }
 
     public long getNumber() {
@@ -81,12 +97,12 @@ public class Delegation {
         this.travelBack = travelBack;
     }
 
-    public float getAdvance() {
-        return advance;
+    public Float getAdvance() {
+        return advanceAmount;
     }
 
-    public void setAdvance(float advance) {
-        this.advance = advance;
+    public void setAdvance(Float advance) {
+        this.advanceAmount = advance;
     }
 
     public List<Bill> getBills() {
