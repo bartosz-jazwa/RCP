@@ -30,6 +30,7 @@ public class Employee implements Serializable{
     private String position;
     @OneToMany(targetEntity = Entry.class, cascade = CascadeType.ALL, mappedBy = "employee",fetch = FetchType.LAZY)
     private Set<Entry> entries = new HashSet<>();
+    private Long cardNumber;
 
     public Employee() {
     }

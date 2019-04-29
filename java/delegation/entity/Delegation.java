@@ -1,14 +1,25 @@
 package delegation.entity;
 
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.dataformat.xml.XmlMapper;
+import currencies.AvgRate;
+import currencies.ExchangeRates;
 import database.entity.Employee;
 import database.entity.Project;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.time.*;
-import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
+import java.time.format.DateTimeFormatter;
 import java.util.Currency;
 import java.util.List;
 import java.util.Locale;
+import java.util.stream.Collectors;
 
 public class Delegation {
     private long number;
@@ -19,7 +30,11 @@ public class Delegation {
     private TravelBack travelBack;
     private Float advanceAmount;
     private Currency advanceCurrency;
+    private Float sumToPay;
+    private DelegationStatus status;
+    private LocalDate fileDate;
     private List<Bill> bills;
+
 
     public Float calcDiet(Float rate){
 
@@ -46,7 +61,41 @@ public class Delegation {
 
         diet = diet+ fullDays*rate;
         return diet;
+    }
 
+    public Float getExchangeRate(LocalDate date, Currency currency){
+        String formattedDate = date.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        String currencyCode = currency.getCurrencyCode();
+        String urlWithCurrencyAndDate = "http://api.nbp.pl/api/exchangerates/rates/a/"+currencyCode+"/"+formattedDate+"/?format=xml";
+        URL nbpTableUrl = null;
+        try {
+            nbpTableUrl = new URL(urlWithCurrencyAndDate);
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+        ObjectMapper objectMapper =  new XmlMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES,false);
+        ExchangeRates exchangeRate = null;
+        try {
+            exchangeRate = objectMapper.readValue(nbpTableUrl, ExchangeRates.class);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return exchangeRate.getRates().get(0).getRate();
+    }
+
+    public void calculateSumToPay(){
+        Double sumInPln;
+        Float dietRate = 50.0f;  //dodać czytanie z pliku
+        Float exchangeRate = getExchangeRate(this.fileDate,Currency.getInstance(country));
+
+        Float dietInForeignCurrency = calcDiet(dietRate);
+        Float totalDietInPln = dietInForeignCurrency*exchangeRate;
+
+        Double sumOfBills = bills.stream()
+                .filter(Bill::isPayment)
+                .mapToDouble(b -> getExchangeRate(b.getDate(),b.getCurrency())*b.getValue())
+                .sum();
+        sumInPln = totalDietInPln + sumOfBills;
     }
 
     public long getNumber() {
@@ -111,5 +160,13 @@ public class Delegation {
 
     public void setBills(List<Bill> bills) {
         this.bills = bills;
+    }
+
+    public LocalDate getFileDate() {
+        return fileDate;
+    }
+
+    public void setFileDate(LocalDate fileDate) {
+        this.fileDate = fileDate;
     }
 }
